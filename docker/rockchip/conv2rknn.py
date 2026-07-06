@@ -27,8 +27,11 @@ if not os.path.isdir("/config/model_cache/rknn_cache/onnx"):
     )
 
 if "soc" not in configuration:
+    # 1. Check which path exists, fallback to standard path if neither is found, /device-tree/compatible path for HA-Apps with devicetree: true property
+    path = "/proc/device-tree/compatible" if os.path.exists("/proc/device-tree/compatible") else "/device-tree/compatible"
+
     try:
-        with open("/proc/device-tree/compatible") as file:
+        with open(path) as file:
             soc = file.read().split(",")[-1].strip("\x00")
     except FileNotFoundError:
         raise Exception("Make sure to run docker in privileged mode.")
