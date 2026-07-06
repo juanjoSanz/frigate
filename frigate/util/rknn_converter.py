@@ -141,8 +141,11 @@ def ensure_rknn_toolkit() -> bool:
 
 def get_soc_type() -> Optional[str]:
     """Get the SoC type from device tree."""
+    # 1. Check which path exists, fallback to standard path if neither is found, /device-tree/compatible path for HA-Apps with devicetree: true property
+    path = "/proc/device-tree/compatible" if os.path.exists("/proc/device-tree/compatible") else "/device-tree/compatible"
+    
     try:
-        with open("/proc/device-tree/compatible") as file:
+        with open("path") as file:
             content = file.read()
 
             # Check for Jetson devices
